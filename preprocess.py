@@ -225,11 +225,20 @@ def load_data(dataset):
 
 
 def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
-	#### Keep 1/3 of data
-	#df_train = df_train[df_train.index < 4000]
+	# Keep X points, from the dataset beginning
+	if option[0:4] == "--cb":
+		value = int(option[4:])
+		preserve_count = round(len(df) / value)
+
+		print(f"\tKeeping the first {preserve_count} points of the dataset.")
+		first_index = df.index[0]
+		return df[df.index < first_index + preserve_count]
+
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]
-	return df
+
+	# Throw exception with unknown compression method
+	raise TypeError("Unknown compression method.")
 
 if __name__ == '__main__':
 	commands = sys.argv[1:]
