@@ -18,7 +18,8 @@ do
 p=$((2 ** $p))
 
 ## Compression method
-method=cb$p
+#method=cb$p    # keep X first points
+method=ce$p     # keep X last points
 echo
 echo \=\=\>\ Compression method: $method
 

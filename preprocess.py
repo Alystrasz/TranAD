@@ -234,6 +234,20 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		first_index = df.index[0]
 		return df[df.index < first_index + preserve_count]
 
+	# Keep last X points
+	if option[0:4] == "--ce":
+		value = int(option[4:])
+		preserve_count = round(len(df) / value)
+
+		# no compression needed if we're keeping all values
+		if value == 1:
+			print(f"\tKeeping whole dataset.")
+			return df
+
+		print(f"\tKeeping the last {preserve_count} points of the dataset.")
+		last_index = df.index[-1]
+		return df[df.index > last_index - preserve_count]
+
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]
 
