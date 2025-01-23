@@ -7,6 +7,17 @@ import json
 from src.folderconstants import *
 from shutil import copyfile
 
+# todo: dedup
+class color:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    RED = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 datasets = ['synthetic', 'SMD', 'SWaT', 'SMAP', 'MSL', 'WADI', 'MSDS', 'UCR', 'MBA', 'NAB']
 
 wadi_drop = ['2_LS_001_AL', '2_LS_002_AL','2_P_001_STATUS','2_P_002_STATUS']
@@ -129,6 +140,17 @@ def load_data(dataset):
 		dataset_folder = 'data/SWaT'
 		file = os.path.join(dataset_folder, 'series.json')
 		df_train = pd.read_json(file, lines=True)[['val']][3000:6000]
+
+		### Compression phase
+		if len(sys.argv) >= 3:
+			print(f'{color.BLUE}Compressing training dataset...{color.ENDC}')
+			print(f'\tLength before compression: {len(df_train)}')
+
+			df_train = compress(df_train, sys.argv[2])
+
+			print(f'\tLength after compression: {len(df_train)}')
+			print(f'{color.BLUE}Done.{color.ENDC}')
+
 		df_test  = pd.read_json(file, lines=True)[['val']][7000:12000]
 		train, min_a, max_a = normalize2(df_train.values)
 		test, _, _ = normalize2(df_test.values, min_a, max_a)
@@ -197,7 +219,17 @@ def load_data(dataset):
 		for file in ['train', 'test', 'labels']:
 			np.save(os.path.join(folder, f'{file}.npy'), eval(file))
 	else:
-		raise Exception(f'Not Implemented. Check one of {datasets}')
+		# hacky: Tolerate compression options passed through CLI arguments
+		if dataset[0:2] != '--':
+			raise Exception(f'Not Implemented. Check one of {datasets}')
+
+
+def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
+	#### Keep 1/3 of data
+	#df_train = df_train[df_train.index < 4000]
+	#### Keep half of data
+	#df_train = df_train[df_train.index % 10 == 0]
+	return df
 
 if __name__ == '__main__':
 	commands = sys.argv[1:]
