@@ -76,6 +76,12 @@ def parse_log_file(path):
         numbers = re.findall("[0-9]+", matches[0])
         compressed_length = int(numbers[0])
         result["len"] = compressed_length
+    ## Override length case for FLI models
+    matches = re.findall("FLI model state length: [0-9]+", text)
+    if len(matches) != 0:
+        numbers = re.findall("[0-9]+", matches[0])
+        compressed_length = int(numbers[0])
+        result["len"] = compressed_length
     result["compression_ratio"] = round(original_length / compressed_length)
 
     return result
