@@ -10,7 +10,7 @@ mkdir ./logs/$timestamp
 
 
 # Benchmarking loop
-array=$(seq 0 10)
+array=$(seq 0 20)
 for p in $array
 do
 
@@ -19,7 +19,8 @@ p=$((2 ** $p))
 
 ## Compression method
 #method=cb$p    # keep X first points
-method=ce$p     # keep X last points
+#method=ce$p     # keep X last points
+method=stairs$p
 echo
 echo \=\=\>\ Compression method: $method
 

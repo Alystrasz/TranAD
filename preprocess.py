@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
+from compress import stairs_power_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -247,6 +248,15 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		print(f"\tKeeping the last {preserve_count} points of the dataset.")
 		last_index = df.index[-1]
 		return df[df.index > last_index - preserve_count]
+
+	# Stairs compression
+	if option[0:8] == "--stairs":
+		max_err = int(option[8:])
+		print(f"\tStair compressing with a maximum error of {max_err}.")
+
+		stop = round(len(df)/10)*9
+		step_count = round(len(df)/10)
+		return stairs_power_compress(df, stop, step_count, max_err)
 
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]
