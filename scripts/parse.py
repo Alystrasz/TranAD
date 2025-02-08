@@ -120,6 +120,7 @@ def compare_benchmarks(dir1, dir2):
 
     x = results1["compression_ratio"]
     plt.plot(x, results1["precision"], label=os.path.basename(dir1))
+    x = results2["compression_ratio"]
     plt.plot(x, results2["precision"], label=os.path.basename(dir2))
 
     ## Display points counts in decreasing order
