@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
-from compress import stairs_power_compress
+from compress import average_compress, stairs_power_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -257,6 +257,12 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		stop = round(len(df)/10)*9
 		step_count = round(len(df)/10)
 		return stairs_power_compress(df, stop, step_count, max_err)
+
+	# Average compression
+	if option[0:5] == "--avg":
+		window_size = int(option[5:])
+		print(f"\tAverage compressing with a window size of {window_size}.")
+		return average_compress(df, window_size)
 
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]

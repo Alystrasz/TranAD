@@ -36,3 +36,21 @@ def stairs_power_compress(df: pd.DataFrame, stop: float, step_count: float, max_
     df2 = pd.DataFrame(index=df.index)
     df2['val'] = values
     return df2
+
+def average_compress(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
+    frame = df.copy()
+
+    iterations_count = math.ceil(len(df) / window_size)
+    for i in range(0, iterations_count):
+        lower_bound = window_size * i
+        upper_bound = lower_bound + window_size
+
+        if upper_bound > len(df):
+            upper_bound = len(df)
+        print(f"\t~> Averaging values on the interval [{lower_bound}, {upper_bound}].")
+
+        frame[lower_bound:upper_bound] = df[lower_bound:upper_bound].mean()
+
+    print(f"\tWindow size: {window_size}")
+    print(f"\tWindows count: {iterations_count}")
+    return frame

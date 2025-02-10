@@ -18,9 +18,11 @@ do
 p=$((2 ** $p))
 
 ## Compression method
-#method=cb$p    # keep X first points
+#method=cb$p     # keep X first points
 #method=ce$p     # keep X last points
-method=stairs$p
+#method=stairs$p # compress in a stairway fashion
+method=avg$p     # averages frame values, grouping them by windows of X points
+
 echo
 echo \=\=\>\ Compression method: $method
 
