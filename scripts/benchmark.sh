@@ -22,6 +22,7 @@ p=$((2 ** $p))
 #method=ce$p     # keep X last points
 #method=stairs$p # compress in a stairway fashion
 method=avg$p     # averages frame values, grouping them by windows of X points
+#method=cavg$p    # averages frame values, cutting dataset in X windows
 
 echo
 echo \=\=\>\ Compression method: $method

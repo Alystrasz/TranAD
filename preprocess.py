@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
-from compress import average_compress, stairs_power_compress
+from compress import average_compress, average_compress_count, stairs_power_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -263,6 +263,11 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		window_size = int(option[5:])
 		print(f"\tAverage compressing with a window size of {window_size}.")
 		return average_compress(df, window_size)
+	# Average compression (by count)
+	if option[0:6] == "--cavg":
+		window_count = int(option[6:])
+		print(f"\tAverage compressing with a window count of {window_count}.")
+		return average_compress_count(df, window_count)
 
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]
