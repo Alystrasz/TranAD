@@ -107,31 +107,25 @@ def parse_directory(dir_path, print_df=True):
 
     return df
 
-def compare_benchmarks(dir1, dir2):
+def compare_benchmarks(*directories):
     """
     Creates a matplotlib chart to compare two benchmarks' results.
     
     You need to have PyQt5 installed to display the chart: `pip install PyQt5==5.9.2`.
     """
-    results1 = parse_directory(dir1, False)
-    results2 = parse_directory(dir2, False)
-
-    # Remove trailing "/" from dir names if needed
-    if dir1[-1] == "/":
-        dir1 = dir1[:-1]
-    if dir2[-1] == "/":
-        dir2 = dir2[:-1]
-
+    
     # Draw chart
-    fig = plt.figure()
+    plt.figure()
 
-    x = results1["compression_ratio"]
-    plt.plot(x, results1["precision"], label=os.path.basename(dir1))
-    x = results2["compression_ratio"]
-    plt.plot(x, results2["precision"], label=os.path.basename(dir2))
+    for dir in directories:
+        results = parse_directory(dir, False)
 
-    ## Display points counts in decreasing order
-    #plt.gca().invert_xaxis()
+        # Remove trailing "/" from directory name if needed
+        if dir[-1] == "/":
+            dir = dir[:-1]
+
+        x = results["compression_ratio"]
+        plt.plot(x, results["precision"], label=os.path.basename(dir))
 
     plt.title('TranAD precision comparison between two benchmarks')
     plt.ylabel('Precision')
@@ -141,7 +135,7 @@ def compare_benchmarks(dir1, dir2):
 
 # Main
 l = len(sys.argv)
-if l != 2 and l != 3:
+if l < 2:
     raise Exception("Wrong format:\n\tpython scripts/parse.py path/to/log\n\tpython scripts/parse.py path/to/log/dir1 path/to/log/dir2")
 path = sys.argv[1]
 
@@ -150,7 +144,7 @@ if os.path.isfile(path):
     print(result)
 elif l == 2 and os.path.isdir(path):
     parse_directory(path)
-elif l == 3:
-    compare_benchmarks(sys.argv[1], sys.argv[2])
+elif l >= 3:
+    compare_benchmarks(*sys.argv[1:])
 else:
     raise Exception("Input path is not a file neither a directory (?).")
