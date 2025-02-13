@@ -1,5 +1,6 @@
 import math
 import pandas as pd
+import pywt
 
 from fast_linear_interpolation import FastLinearInterpolation
 
@@ -83,6 +84,7 @@ def average_compress_count(df: pd.DataFrame, window_count: int) -> pd.DataFrame:
         lower_bound = window_length * i
         upper_bound = lower_bound + window_length
 
+
         if upper_bound > len(df):
             upper_bound = len(df)
         print(f"\t~> Averaging values on the interval [{lower_bound}, {upper_bound}].")
@@ -91,4 +93,19 @@ def average_compress_count(df: pd.DataFrame, window_count: int) -> pd.DataFrame:
 
     print(f"\tWindow size: {window_length}")
     print(f"\tWindows count: {iterations_count}")
+    return frame
+
+def discrete_wavelet_transform(df: pd.DataFrame) -> pd.DataFrame:
+    frame = df.copy()
+    w = pywt.Wavelet('db3')
+
+    #print(frame['val'].to_numpy().tolist())
+
+    cA, cD = pywt.dwt(frame['val'].to_numpy().tolist(), w)
+    print(len(cA.tolist()))
+    print(len(cD))
+    print(cA.tolist())
+
+    reconstruct = pywt.idwt(cA, cD, w)
+
     return frame

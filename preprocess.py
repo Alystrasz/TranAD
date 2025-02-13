@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
-from compress import average_compress, average_compress_count, stairs_power_compress
+from compress import average_compress, average_compress_count, discrete_wavelet_transform, stairs_power_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -268,6 +268,11 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		window_count = int(option[6:])
 		print(f"\tAverage compressing with a window count of {window_count}.")
 		return average_compress_count(df, window_count)
+
+	# DWT (discrete wavelet compress)
+	if option[0:5] == "--dwt":
+		print(f"\tApplying DWT compression.")
+		return discrete_wavelet_transform(df)
 
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]
