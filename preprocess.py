@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
-from compress import average_compress, average_compress_count, discrete_wavelet_transform, fli_compress, stairs_power_compress
+from compress import average_compress, average_compress_count, discrete_wavelet_transform, fli_compress, stairs_power_compress, random_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -275,6 +275,12 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		window_count = int(option[6:])
 		print(f"\tAverage compressing with a window count of {window_count}.")
 		return average_compress_count(df, window_count)
+
+	# Random compression
+	if option[0:5] == "--rdm":
+		value = int(option[5:])
+		print(f"\tRemoving {value} points from dataset.")
+		return random_compress(df, value)
 
 	# DWT (discrete wavelet compress)
 	if option[0:5] == "--dwt":

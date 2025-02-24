@@ -1,6 +1,7 @@
 import math
 import pandas as pd
 import pywt
+import random
 
 from fast_linear_interpolation import FastLinearInterpolation
 
@@ -112,6 +113,15 @@ def average_compress_count(df: pd.DataFrame, window_count: int) -> pd.DataFrame:
 
     print(f"\tWindow size: {window_length}")
     print(f"\tWindows count: {iterations_count}")
+    return frame
+
+def random_compress(df: pd.DataFrame, count: int) -> pd.DataFrame:
+    target_len = len(df) - count
+    frame = df.copy()
+
+    while len(frame) > target_len:
+        r = random.choice(frame.index.values)
+        frame = frame.drop(r)
     return frame
 
 def discrete_wavelet_transform(df: pd.DataFrame) -> pd.DataFrame:
