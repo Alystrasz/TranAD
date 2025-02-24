@@ -20,8 +20,9 @@ p=$((2 ** $p))
 ## Compression method
 #method=cb$p     # keep X first points
 #method=ce$p     # keep X last points
+method=fli$p     # uses a FLI model with a tolerated error of 0.01 * X
 #method=stairs$p # compress in a stairway fashion
-method=avg$p     # averages frame values, grouping them by windows of X points
+#method=avg$p     # averages frame values, grouping them by windows of X points
 #method=cavg$p    # averages frame values, cutting dataset in X windows
 
 echo

@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
-from compress import average_compress, average_compress_count, discrete_wavelet_transform, stairs_power_compress
+from compress import average_compress, average_compress_count, discrete_wavelet_transform, fli_compress, stairs_power_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -248,6 +248,13 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 		print(f"\tKeeping the last {preserve_count} points of the dataset.")
 		last_index = df.index[-1]
 		return df[df.index > last_index - preserve_count]
+	
+	# FLI compression
+	if option[0:5] == "--fli":
+		value = int(option[5:])
+		epsilon = 0.01 * value
+		print(f"\tFLI compressing with an epsilon of {epsilon}.")
+		return fli_compress(df, epsilon)
 
 	# Stairs compression
 	if option[0:8] == "--stairs":
