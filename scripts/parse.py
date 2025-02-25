@@ -89,7 +89,7 @@ def parse_log_file(path):
         compressed_length = int(numbers[0])
         result["len"] = compressed_length
 
-    result["compression_ratio"] = round(original_length / compressed_length)
+    result["compression_ratio"] = original_length / compressed_length
 
     return result
 
