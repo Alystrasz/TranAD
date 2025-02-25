@@ -95,7 +95,13 @@ def parse_log_file(path):
 
 def parse_directory(dir_path, print_df=True):
     results = []
-    for file in os.listdir(dir_path):
+    files = os.listdir(dir_path)
+
+    if re.findall(".*\.[0-9].log", files[0]):
+        print("Multiple files detected, averaging...")
+        return parse_multiple_benchmarks_directory(dir_path, print_df)
+
+    for file in files:
         file_path = os.path.join(dir_path, file)
         results.append( parse_log_file(file_path) )
 
@@ -106,6 +112,44 @@ def parse_directory(dir_path, print_df=True):
         print(df.to_string(index=False))
 
     return df
+
+def parse_multiple_benchmarks_directory(dir_path, print_df=True):
+    files = os.listdir(dir_path)
+    avg_results = {}
+
+    for file in files:
+        file_path = os.path.join(dir_path, file)
+
+        # First match is the count of removed points, second match is the benchmark occurrence
+        matches = re.findall("[0-9]+", file)
+        count = matches[0]
+        occ = matches[1]
+
+        result = parse_log_file(file_path)
+        if count not in avg_results:
+            avg_results[count] = [result]
+        else:
+            avg_results[count].append(result)
+
+    results = []
+    # Compile all results through averaging
+    for key, value in avg_results.items() :
+        tmp_df = pd.DataFrame(value)
+
+        #avg each df column
+        result = {}
+        for col in list(tmp_df.columns.values):
+            result[col] = tmp_df.loc[:, col].mean()
+        results.append(result)
+
+    df = pd.DataFrame(results)
+    df = df.sort_values('compression_ratio')
+
+    if print_df == True:
+        print(df.to_string(index=False))
+
+    return df
+
 
 def compare_benchmarks(*directories):
     """
