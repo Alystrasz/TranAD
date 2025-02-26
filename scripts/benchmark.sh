@@ -10,12 +10,13 @@ mkdir ./logs/$timestamp
 
 
 # Benchmarking loop
-array=$(seq 0 20)
-for p in $array
+array=(1 2 4 8 16 32 64 128 256 512 1024 2048 2990 2997)
+#array=$(seq 0 20)
+for p in "${array[@]}"
 do
 
 ## Compute power of 2
-p=$((2 ** $p))
+#p=$((2 ** $p))
 
 ## Compression method
 #method=cb$p     # keep X first points
