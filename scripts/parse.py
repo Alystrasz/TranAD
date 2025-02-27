@@ -167,7 +167,19 @@ def compare_benchmarks(*directories):
     """
     
     # Draw chart
-    plt.figure()
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 5), gridspec_kw={'wspace': 0.1, 'hspace': 0.2})
+    plt.subplots_adjust(left=0.04, right=0.98)
+    ax1.set_title("f1")
+    ax1.set_xlabel('Compression ratio')
+    ax1.set_xscale('log')
+
+    ax2.set_title("AUC/ROC")
+    ax2.set_xlabel('Compression ratio')
+    ax2.set_xscale('log')
+
+    ax3.set_title("Precision")
+    ax3.set_xlabel('Compression ratio')
+    ax3.set_xscale('log')
 
     # Dataset name
     dataset = None
@@ -180,17 +192,15 @@ def compare_benchmarks(*directories):
             dir = dir[:-1]
 
         x = results["compression_ratio"]
-        plt.plot(x, results["precision"], label=os.path.basename(dir), marker=".")
+        ax1.plot(x, results["f1"], label=os.path.basename(dir), marker=".")
+        ax2.plot(x, results["auc"], marker=".")
+        ax3.plot(x, results["precision"], marker=".")
 
         if dataset == None:
             dataset = results["dataset"].values[0]
 
-    plt.xscale('log')
-
-    plt.title(f'TranAD precision on {dataset} dataset')
-    plt.ylabel('Precision')
-    plt.xlabel('Compression ratio')
-    plt.legend()
+    fig.suptitle(f'TranAD precision on {dataset} dataset with several compression techniques')
+    fig.legend()
     plt.show()
 
 # Main
