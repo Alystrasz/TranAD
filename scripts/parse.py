@@ -171,6 +171,8 @@ def compare_benchmarks(*directories):
         x = results["compression_ratio"]
         plt.plot(x, results["precision"], label=os.path.basename(dir))
 
+    #plt.xscale('log')
+
     plt.title('TranAD precision comparison between two benchmarks')
     plt.ylabel('Precision')
     plt.xlabel('Compression ratio')
