@@ -177,14 +177,14 @@ def compare_benchmarks(*directories):
     ax2.set_xlabel('Compression ratio')
     ax2.set_xscale('log')
 
-    ax3.set_title("Precision")
+    ax3.set_title("Precision / recall")
     ax3.set_xlabel('Compression ratio')
     ax3.set_xscale('log')
 
     # Dataset name
     dataset = None
 
-    for dir in directories:
+    for i, dir in enumerate(directories):
         results = parse_directory(dir, False)
 
         # Remove trailing "/" from directory name if needed
@@ -195,6 +195,7 @@ def compare_benchmarks(*directories):
         ax1.plot(x, results["f1"], label=os.path.basename(dir), marker=".")
         ax2.plot(x, results["auc"], marker=".")
         ax3.plot(x, results["precision"], marker=".")
+        ax3.plot(x, results["recall"], marker=",", linestyle="dotted", color=ax3.get_lines()[len(ax3.get_lines())-1].get_color())
 
         if dataset == None:
             dataset = results["dataset"].values[0]
