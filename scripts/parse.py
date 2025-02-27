@@ -91,6 +91,11 @@ def parse_log_file(path):
 
     result["compression_ratio"] = original_length / compressed_length
 
+    # Dataset name
+    matches = re.findall("Training TranAD on (.+)\x1b\[0m", text)
+    if len(matches) != 0:
+        result["dataset"] = matches[0]
+
     return result
 
 def parse_directory(dir_path, print_df=True):
@@ -139,6 +144,9 @@ def parse_multiple_benchmarks_directory(dir_path, print_df=True):
         #avg each df column
         result = {}
         for col in list(tmp_df.columns.values):
+            # Don't mean the column containing the dataset name
+            if col == "dataset":
+                continue
             result[col] = tmp_df.loc[:, col].mean()
         results.append(result)
 
@@ -161,6 +169,9 @@ def compare_benchmarks(*directories):
     # Draw chart
     plt.figure()
 
+    # Dataset name
+    dataset = None
+
     for dir in directories:
         results = parse_directory(dir, False)
 
@@ -171,9 +182,12 @@ def compare_benchmarks(*directories):
         x = results["compression_ratio"]
         plt.plot(x, results["precision"], label=os.path.basename(dir), marker=".")
 
+        if dataset == None:
+            dataset = results["dataset"].values[0]
+
     #plt.xscale('log')
 
-    plt.title('TranAD precision comparison between two benchmarks')
+    plt.title(f'TranAD precision on {dataset} dataset')
     plt.ylabel('Precision')
     plt.xlabel('Compression ratio')
     plt.legend()
