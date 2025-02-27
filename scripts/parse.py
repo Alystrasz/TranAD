@@ -185,7 +185,7 @@ def compare_benchmarks(*directories):
         if dataset == None:
             dataset = results["dataset"].values[0]
 
-    #plt.xscale('log')
+    plt.xscale('log')
 
     plt.title(f'TranAD precision on {dataset} dataset')
     plt.ylabel('Precision')
