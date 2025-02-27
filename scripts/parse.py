@@ -169,7 +169,7 @@ def compare_benchmarks(*directories):
             dir = dir[:-1]
 
         x = results["compression_ratio"]
-        plt.plot(x, results["precision"], label=os.path.basename(dir))
+        plt.plot(x, results["precision"], label=os.path.basename(dir), marker=".")
 
     #plt.xscale('log')
 
