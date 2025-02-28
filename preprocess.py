@@ -128,6 +128,17 @@ def load_data(dataset):
 	elif dataset == 'MSDS':
 		dataset_folder = 'data/MSDS'
 		df_train = pd.read_csv(os.path.join(dataset_folder, 'train.csv'))
+
+		### Compression phase
+		if len(sys.argv) >= 3:
+			print(f'{color.BLUE}Compressing training dataset...{color.ENDC}')
+			print(f'\tLength before compression: {len(df_train)}')
+
+			df_train = compress(df_train, sys.argv[2])
+
+			print(f'\tLength after compression: {len(df_train)}')
+			print(f'{color.BLUE}Done.{color.ENDC}')
+
 		df_test  = pd.read_csv(os.path.join(dataset_folder, 'test.csv'))
 		df_train, df_test = df_train.values[::5, 1:], df_test.values[::5, 1:]
 		_, min_a, max_a = normalize3(np.concatenate((df_train, df_test), axis=0))
