@@ -1,4 +1,5 @@
 import math
+import numpy as np
 import pandas as pd
 import pywt
 import random
@@ -28,6 +29,10 @@ def get_staired_tolerated_error(t: int, stop: int, step_count: int, max_err: flo
     return max_err - ((math.floor(t / step_x_length)) * step_y_size)
 
 def fli_compress(df: pd.DataFrame, epsilon: float) -> pd.DataFrame:
+    if len(df.columns) > 1:
+        print("\tCompressing MTS dataframe...")
+        return fli_compress_mts(df, epsilon)
+
     model = FastLinearInterpolation()
     model.setError(epsilon)
 
@@ -46,6 +51,41 @@ def fli_compress(df: pd.DataFrame, epsilon: float) -> pd.DataFrame:
     df2 = pd.DataFrame(index=df.index)
     df2['val'] = values
     return df2
+
+def fli_compress_mts(df: pd.DataFrame, epsilon: float) -> pd.DataFrame:
+    timestamp_col = df.columns[0]
+    original_timestamps = df[timestamp_col]
+    timestamps = original_timestamps.apply(lambda x: pd.Timestamp(x).timestamp())
+    models = {}
+
+    # Create one FLI instance per column
+    for col in df.columns[1:]:
+        print(f"\t- Modeling {col}...")
+        model = FastLinearInterpolation()
+        model.setError(epsilon)
+
+        for i, datum in enumerate(df[col]):
+            model.add(timestamps[i], datum)
+
+        models[col] = model
+    print("\tDone modelling, starting rebuilding frame using FLI models.")
+
+    # Rebuild dataframe using FLI instances
+    frame = pd.DataFrame(index=df.index)
+    frame[timestamp_col] = original_timestamps
+    for col in df.columns[1:]:
+        print(f"\t- Rebuilding {col}...")
+        model = models[col]
+        frame[col] = timestamps.apply(lambda t: model.read(t))
+    print("\tDone.")
+
+    # Print total models length to logs for analysis
+    total = 0
+    for col in df.columns[1:]:
+        total += len(models[col].data())
+    print(f"\tFLI model state length: {total}")
+
+    return frame
 
 def stairs_power_compress(df: pd.DataFrame, stop: float, step_count: float, max_err: float) -> pd.DataFrame:
     model = FastLinearInterpolation()
