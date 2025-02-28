@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Parameters check
+if [ $# != 1 ]; then
+    echo " Usage: ./scripts/benchmark.sh [MSDS|SWaT|SMD]"
+    exit
+fi
+
+dataset=$1
+supported=("MSDS" "SWaT" "SMD")
+if [[ $(echo ${supported[@]} | fgrep -w $dataset) ]]
+then
+    echo
+else
+    echo "Unsupported dataset (\"$dataset\")."
+    exit
+fi
+
+
 # Directories creation
 if [ ! -d "./logs" ]; then
     mkdir ./logs
@@ -52,13 +69,13 @@ echo "Started at:" $(date) >$filename
 echo "" >>$filename
 
 ## Preprocess
-python preprocess.py SWaT --$method >>$filename
+python preprocess.py $dataset --$method >>$filename
 
 ## Training
 echo
 echo "Starting training at:" $(date) >>$filename
 echo
-python main.py --model TranAD --dataset SWaT --retrain >>$filename
+python main.py --model TranAD --dataset $dataset --retrain >>$filename
 
 ## End time
 echo "" >>$filename
