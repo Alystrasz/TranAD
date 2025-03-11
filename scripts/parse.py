@@ -102,7 +102,8 @@ def parse_directory(dir_path, print_df=True):
     results = []
     files = os.listdir(dir_path)
 
-    if re.findall(".*\.[0-9].log", files[0]):
+    first_file = files[0]
+    if re.findall(".*\.[0-9].log", first_file) and re.findall("rdm", first_file):
         print("Multiple files detected, averaging...")
         return parse_multiple_benchmarks_directory(dir_path, print_df)
 
