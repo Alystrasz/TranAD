@@ -21,10 +21,11 @@ fi
 #method=cb     # keep X first points
 #method=ce     # keep X last points
 #method=fli     # uses a FLI model with a tolerated error of 0.01 * X
-method=rdm    # randomly removes X points from dataset
+#method=rdm    # randomly removes X points from dataset
 #method=stairs # compress in a stairway fashion
 #method=avg     # averages frame values, grouping them by windows of X points
 #method=cavg    # averages frame values, cutting dataset in X windows
+method=pow      # wip power compression
 
 
 # Directories creation
@@ -39,7 +40,8 @@ mkdir ./logs/$timestamp
 # Benchmarking loop
 #array=(1 200 400 600 800 1000 1200 1400 1600 1800 2000 2200 2400 2600 2800 2970 2985 2993 2996 2997) #Random series (leaves only 3 points in the end)
 #array=(1 2 4 8 16 32 64 128 256 512 1024 2048 2500 3000 3500 4096 4500 5000 5500 6000 6500 7000 7500 8192 16384 32768) #FLI coefficients
-array=(1000 2000 5000 10000 20000 50000 100000 110000 120000 130000 140000 143000 146000)
+#array=(1000 2000 5000 10000 20000 50000 100000 110000 120000 130000 140000 143000 146000)
+array=(0.000001 0.00001 0.0001 0.001 0.01 0.02 0.05 0.1 0.2 0.5 1)
 #array=$(seq 0 20)
 for p in "${array[@]}"
 do

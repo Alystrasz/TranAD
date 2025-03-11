@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pickle
 import json
-from compress import average_compress, average_compress_count, discrete_wavelet_transform, fli_compress, stairs_power_compress, random_compress
+from compress import average_compress, average_compress_count, discrete_wavelet_transform, fli_compress, stairs_power_compress, power_compress, random_compress
 from src.folderconstants import *
 from shutil import copyfile
 
@@ -297,6 +297,11 @@ def compress(df: pd.DataFrame, option: str) -> pd.DataFrame:
 	if option[0:5] == "--dwt":
 		print(f"\tApplying DWT compression.")
 		return discrete_wavelet_transform(df)
+
+	# Power compression (our wip technique)
+	if option[0:5] == "--pow":
+		value = float(option[5:])
+		return power_compress(df, value)
 
 	#### Keep half of data
 	#df_train = df_train[df_train.index % 10 == 0]

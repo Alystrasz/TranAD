@@ -109,6 +109,38 @@ def stairs_power_compress(df: pd.DataFrame, stop: float, step_count: float, max_
     df2['val'] = values
     return df2
 
+def get_tolerated_error(t: int, a: float, k: float) -> float:
+    return k * pow(t, -1 * a)
+
+def power_compress(df: pd.DataFrame, a: float) -> pd.DataFrame:
+    if len(df.columns) > 1:
+        raise TypeError("Cannot power compress a data frame with several columns.")
+
+    model = FastLinearInterpolation()
+
+    # First point is uncompressed
+    model.add(df.index[0], df.iloc[0].values[0])
+
+    # Arbitrary value for k
+    k = 10
+    print(f"\tApplying power compression (a={a}, k={k}).")
+
+    # todo: Realign timestamps on 0?
+
+    for i in range(1, len(df)):
+        tolerated_error = get_tolerated_error(i, a, k)
+        model.setError(tolerated_error)
+        model.add(df.index[i], df.iloc[i].values[0])
+
+    values = [df.iloc[0].values[0]]
+    for i in range(1, len(df)):
+        values.append(model.read(df.index[i]))
+
+    print(f"\tFLI model state length: {len(model.data())}")
+    df2 = pd.DataFrame(index=df.index)
+    df2['val'] = values
+    return df2
+
 def average_compress(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
     frame = df.copy()
 
