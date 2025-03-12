@@ -142,6 +142,10 @@ def power_compress(df: pd.DataFrame, a: float) -> pd.DataFrame:
     return df2
 
 def average_compress(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
+    if len(df.columns) > 1:
+        print("\tCompressing MTS dataframe...")
+        return average_compress_mts(df, window_size)
+
     frame = df.copy()
 
     iterations_count = math.ceil(len(df) / window_size)
@@ -157,6 +161,26 @@ def average_compress(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
 
     print(f"\tWindow size: {window_size}")
     print(f"\tWindows count: {iterations_count}")
+    return frame
+
+def average_compress_mts(df: pd.DataFrame, window_size: int) -> pd.DataFrame:
+    frame = df.copy()
+
+    for col in frame.columns[1:]:
+        print(f"\t- Modeling {col}...")
+        iterations_count = math.ceil(len(df) / window_size)
+        for i in range(0, iterations_count):
+            lower_bound = window_size * i
+            upper_bound = lower_bound + window_size
+
+            if upper_bound > len(frame):
+                upper_bound = len(frame)
+            print(f"\t\t~> Averaging values on [{col}][{lower_bound}, {upper_bound}[.")
+
+            frame[col][lower_bound:upper_bound] = frame[col][lower_bound:upper_bound].mean()
+
+    print("\tDone.")
+    print(f"\tWindows count: {iterations_count * len(df.columns)}")
     return frame
 
 def average_compress_count(df: pd.DataFrame, window_count: int) -> pd.DataFrame:
