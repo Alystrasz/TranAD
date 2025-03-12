@@ -212,13 +212,9 @@ def average_compress_count(df: pd.DataFrame, window_count: int) -> pd.DataFrame:
     return frame
 
 def random_compress(df: pd.DataFrame, count: int) -> pd.DataFrame:
-    target_len = len(df) - count
     frame = df.copy()
-
-    while len(frame) > target_len:
-        r = random.choice(frame.index.values)
-        frame = frame.drop(r)
-    return frame
+    drop_indices = np.random.choice(frame.index, count, replace=False)
+    return frame.drop(drop_indices)
 
 def discrete_wavelet_transform(df: pd.DataFrame) -> pd.DataFrame:
     frame = df.copy()
